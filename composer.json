@@ -1,0 +1,16 @@
+{
+    "name": "alumateria/contracts",
+    "description": "Shared message and domain contracts for Alumateria microservices",
+    "type": "library",
+    "license": "proprietary",
+    "autoload": {
+        "psr-4": {
+            "Alumateria\\Contracts\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.2"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
