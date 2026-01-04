@@ -14,6 +14,8 @@ final class OrderCreated
         public string $currency,
         public \DateTimeImmutable $createdAt,
         public string $correlationId,
+        public ?string $clientName = null,
+        public ?string $clientEmail = null,
     ) {
     }
 }
