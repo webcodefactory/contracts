@@ -9,6 +9,7 @@ final class ClientCreated
     public function __construct(
         public string $clientId,
         public string $name,
+        public string $lastName,
         public string $email,
         public \DateTimeImmutable $createdAt,
         public string $correlationId,
