@@ -16,6 +16,7 @@ final class OrderCreated
         public string $correlationId,
         public ?string $clientName = null,
         public ?string $clientEmail = null,
+        public ?string $shippingMethodName = null,
     ) {
     }
 }
