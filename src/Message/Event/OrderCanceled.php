@@ -15,7 +15,8 @@ final class OrderCanceled
         public string $reason,
         public \DateTimeImmutable $canceledAt,
         public string $correlationId,
-        )
-    {
+        public int $grandTotalAmount = 0,
+        public string $currency = 'PLN',
+    ) {
     }
 }

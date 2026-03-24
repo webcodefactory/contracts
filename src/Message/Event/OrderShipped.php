@@ -14,7 +14,8 @@ final class OrderShipped
         public array $items,
         public \DateTimeImmutable $shippedAt,
         public string $correlationId,
-        )
-    {
+        public int $grandTotalAmount = 0,
+        public string $currency = 'PLN',
+    ) {
     }
 }
