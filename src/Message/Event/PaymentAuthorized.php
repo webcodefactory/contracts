@@ -13,6 +13,7 @@ final class PaymentAuthorized
         public string $status,
         public \DateTimeImmutable $authorizedAt,
         public string $correlationId,
+        public ?string $tenantId = null,
     ) {
     }
 }

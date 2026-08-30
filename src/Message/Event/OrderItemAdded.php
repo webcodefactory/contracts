@@ -18,6 +18,7 @@ final class OrderItemAdded
         public int $rowTotalAmount,
         public \DateTimeImmutable $addedAt,
         public string $correlationId,
+        public ?string $tenantId = null,
     ) {
     }
 }

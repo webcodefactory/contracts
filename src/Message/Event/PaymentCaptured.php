@@ -13,6 +13,7 @@ final class PaymentCaptured
         public string $status,
         public \DateTimeImmutable $capturedAt,
         public string $correlationId,
+        public ?string $tenantId = null,
     ) {
     }
 }

@@ -17,6 +17,7 @@ final class OrderCreated
         public ?string $clientName = null,
         public ?string $clientEmail = null,
         public ?string $shippingMethodName = null,
+        public ?string $tenantId = null,
     ) {
     }
 }

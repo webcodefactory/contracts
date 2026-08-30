@@ -13,6 +13,7 @@ final class ClientCreated
         public string $email,
         public \DateTimeImmutable $createdAt,
         public string $correlationId,
+        public ?string $tenantId = null,
     ) {
     }
 }

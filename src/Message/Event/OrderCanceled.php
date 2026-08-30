@@ -17,6 +17,7 @@ final class OrderCanceled
         public string $correlationId,
         public int $grandTotalAmount = 0,
         public string $currency = 'PLN',
+        public ?string $tenantId = null,
     ) {
     }
 }

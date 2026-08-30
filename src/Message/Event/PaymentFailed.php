@@ -12,6 +12,7 @@ final class PaymentFailed
         public string $reason,
         public \DateTimeImmutable $failedAt,
         public string $correlationId,
+        public ?string $tenantId = null,
     ) {
     }
 }

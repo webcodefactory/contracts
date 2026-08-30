@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Alumateria\Contracts\Tenant;
 
 use Alumateria\Contracts\Tenant\Doctrine\TenantFilterConfigurator;
+use Alumateria\Contracts\Tenant\Http\TenantHeaders;
 use Alumateria\Contracts\Tenant\Http\TenantRequestSubscriber;
 use Alumateria\Contracts\Tenant\Messenger\TenantContextMiddleware;
 use Alumateria\Contracts\Tenant\Monolog\TenantProcessor;
@@ -55,6 +56,9 @@ final class TenantBundle extends AbstractBundle
         $services->set(TenantRequestSubscriber::class)
             ->args([service(TenantContext::class)])
             ->tag('kernel.event_subscriber');
+
+        $services->set(TenantHeaders::class)
+            ->args([service(TenantContext::class)]);
 
         $services->set(TenantProcessor::class)
             ->args([service(TenantContext::class)])
