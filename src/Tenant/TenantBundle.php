@@ -42,8 +42,10 @@ final class TenantBundle extends AbstractBundle
 
         // Doctrine safety net: sync the tenant SQL filter with the context.
         // Only in services that actually use the ORM (notification-api etc.
-        // have no DoctrineBundle).
-        if ($builder->hasExtension('doctrine')) {
+        // have no DoctrineBundle). Checked via kernel.bundles because
+        // loadExtension receives a temporary builder without extensions.
+        $bundles = $builder->hasParameter('kernel.bundles') ? $builder->getParameter('kernel.bundles') : [];
+        if (is_array($bundles) && array_key_exists('DoctrineBundle', $bundles)) {
             $services->set(TenantFilterConfigurator::class)
                 ->args([service('doctrine')]);
 
