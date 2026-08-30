@@ -24,7 +24,11 @@
         "symfony/messenger": "^6.4"
     },
     "require-dev": {
+        "doctrine/orm": "^3.0",
         "phpunit/phpunit": "^10.5"
+    },
+    "suggest": {
+        "doctrine/orm": "Enables the tenant SQL filter safety net (Alumateria\\Contracts\\Tenant\\Doctrine)"
     },
     "minimum-stability": "dev",
     "prefer-stable": true

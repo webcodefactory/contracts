@@ -15,9 +15,20 @@ final class TenantContext
 {
     private ?TenantId $tenantId = null;
 
+    /** @var list<TenantChangeListenerInterface> */
+    private array $listeners = [];
+
+    public function subscribe(TenantChangeListenerInterface $listener): void
+    {
+        $this->listeners[] = $listener;
+        // late subscribers see the current state immediately
+        $listener->onTenantChanged($this->tenantId);
+    }
+
     public function set(TenantId $tenantId): void
     {
         $this->tenantId = $tenantId;
+        $this->notify();
     }
 
     public function get(): TenantId
@@ -38,5 +49,13 @@ final class TenantContext
     public function clear(): void
     {
         $this->tenantId = null;
+        $this->notify();
+    }
+
+    private function notify(): void
+    {
+        foreach ($this->listeners as $listener) {
+            $listener->onTenantChanged($this->tenantId);
+        }
     }
 }

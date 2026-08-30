@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Alumateria\Contracts\Tenant;
 
+use Alumateria\Contracts\Tenant\Doctrine\TenantFilterConfigurator;
 use Alumateria\Contracts\Tenant\Http\TenantRequestSubscriber;
 use Alumateria\Contracts\Tenant\Messenger\TenantContextMiddleware;
 use Alumateria\Contracts\Tenant\Monolog\TenantProcessor;
@@ -37,7 +38,17 @@ final class TenantBundle extends AbstractBundle
     {
         $services = $container->services();
 
-        $services->set(TenantContext::class);
+        $tenantContext = $services->set(TenantContext::class);
+
+        // Doctrine safety net: sync the tenant SQL filter with the context.
+        // Only in services that actually use the ORM (notification-api etc.
+        // have no DoctrineBundle).
+        if ($builder->hasExtension('doctrine')) {
+            $services->set(TenantFilterConfigurator::class)
+                ->args([service('doctrine')]);
+
+            $tenantContext->call('subscribe', [service(TenantFilterConfigurator::class)]);
+        }
 
         $services->set(TenantRequestSubscriber::class)
             ->args([service(TenantContext::class)])
