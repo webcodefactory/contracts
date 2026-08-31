@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Alumateria\Contracts\Tenant;
 
 use Alumateria\Contracts\Tenant\Doctrine\TenantFilterConfigurator;
+use Alumateria\Contracts\Tenant\Http\TenantAccessSubscriber;
 use Alumateria\Contracts\Tenant\Http\TenantHeaders;
 use Alumateria\Contracts\Tenant\Http\TenantRequestSubscriber;
 use Alumateria\Contracts\Tenant\Messenger\TenantContextMiddleware;
@@ -59,6 +60,14 @@ final class TenantBundle extends AbstractBundle
 
         $services->set(TenantHeaders::class)
             ->args([service(TenantContext::class)]);
+
+        // Admin membership guard - only where SecurityBundle provides the
+        // token storage
+        if (is_array($bundles) && array_key_exists('SecurityBundle', $bundles)) {
+            $services->set(TenantAccessSubscriber::class)
+                ->args([service('security.token_storage'), service(TenantContext::class)])
+                ->tag('kernel.event_subscriber');
+        }
 
         $services->set(TenantProcessor::class)
             ->args([service(TenantContext::class)])
