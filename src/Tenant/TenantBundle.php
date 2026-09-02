@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Alumateria\Contracts\Tenant;
 
 use Alumateria\Contracts\Tenant\Doctrine\TenantFilterConfigurator;
+use Alumateria\Contracts\Tenant\Domain\PredisTenantDomainResolver;
+use Alumateria\Contracts\Tenant\Domain\TenantDomainResolverInterface;
 use Alumateria\Contracts\Tenant\Http\TenantAccessSubscriber;
 use Alumateria\Contracts\Tenant\Http\TenantHeaders;
 use Alumateria\Contracts\Tenant\Http\TenantRequestSubscriber;
@@ -54,8 +56,19 @@ final class TenantBundle extends AbstractBundle
             $tenantContext->call('subscribe', [service(TenantFilterConfigurator::class)]);
         }
 
+        // Host->tenant fallback for dynamic shop domains (faza B): reads
+        // the shared Redis mapping written by settings-api. Requires
+        // predis; services without it (pure workers) resolve by header only.
+        $resolver = null;
+        if (class_exists(\Predis\Client::class)) {
+            $services->set(PredisTenantDomainResolver::class)
+                ->args(['%env(default::REDIS_URL)%']);
+            $services->alias(TenantDomainResolverInterface::class, PredisTenantDomainResolver::class);
+            $resolver = service(PredisTenantDomainResolver::class);
+        }
+
         $services->set(TenantRequestSubscriber::class)
-            ->args([service(TenantContext::class)])
+            ->args([service(TenantContext::class), $resolver])
             ->tag('kernel.event_subscriber');
 
         $services->set(TenantHeaders::class)

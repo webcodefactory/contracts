@@ -26,10 +26,12 @@
     },
     "require-dev": {
         "doctrine/orm": "^3.0",
-        "phpunit/phpunit": "^10.5"
+        "phpunit/phpunit": "^10.5",
+        "predis/predis": "^2.0|^3.0"
     },
     "suggest": {
-        "doctrine/orm": "Enables the tenant SQL filter safety net (Alumateria\\Contracts\\Tenant\\Doctrine)"
+        "doctrine/orm": "Enables the tenant SQL filter safety net (Alumateria\\Contracts\\Tenant\\Doctrine)",
+        "predis/predis": "Enables Host-based tenant domain resolution (Alumateria\\Contracts\\Tenant\\Domain)"
     },
     "minimum-stability": "dev",
     "prefer-stable": true
