@@ -30,6 +30,11 @@ final class TenantFilter extends SQLFilter
             return '';
         }
 
+        // Platform registry entities opt out explicitly (see the attribute)
+        if ($targetEntity->getReflectionClass()->getAttributes(WithoutTenantFilter::class) !== []) {
+            return '';
+        }
+
         if (!$this->hasParameter(self::PARAMETER)) {
             throw new TenantNotResolvedException();
         }

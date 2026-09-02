@@ -26,13 +26,25 @@ final class TenantFilterTest extends TestCase
         return new TenantFilter($em);
     }
 
-    private function metadata(bool $hasTenantField): ClassMetadata
+    private function metadata(bool $hasTenantField, bool $exempt = false): ClassMetadata
     {
+        $entity = $exempt
+            ? new #[\Alumateria\Contracts\Tenant\Doctrine\WithoutTenantFilter] class {}
+            : new class {};
+
         $metadata = $this->createMock(ClassMetadata::class);
         $metadata->method('hasField')->with('tenantId')->willReturn($hasTenantField);
         $metadata->method('getColumnName')->with('tenantId')->willReturn('tenant_id');
+        $metadata->method('getReflectionClass')->willReturn(new \ReflectionClass($entity));
 
         return $metadata;
+    }
+
+    public function testExemptRegistryEntityIsNotFiltered(): void
+    {
+        $filter = $this->createFilter();
+
+        $this->assertSame('', $filter->addFilterConstraint($this->metadata(true, exempt: true), 't0'));
     }
 
     public function testIgnoresEntitiesWithoutTenantField(): void
