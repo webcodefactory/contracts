@@ -41,10 +41,23 @@ final class TenantContextObserverTest extends TestCase
         $context->clear();
 
         $this->assertSame(
-            [null, 'a0000000-0000-4000-8000-000000000001', null],
+            ['a0000000-0000-4000-8000-000000000001', null],
             $seen,
-            'subscribe syncs current state, then every set/clear notifies',
+            'subscribing to an unresolved context is silent, then every set/clear notifies',
         );
+    }
+
+    public function testSubscribingToUnresolvedContextDoesNotTouchTheListener(): void
+    {
+        // Regression: syncing a null tenant on subscribe re-entered Doctrine's
+        // lazy EntityManager initialisation via the filter configurator
+        $context = new TenantContext();
+        [$listener, ] = $pair = $this->recordingListener();
+        $seen = &$pair[1];
+
+        $context->subscribe($listener);
+
+        $this->assertSame([], $seen);
     }
 
     public function testLateSubscriberIsSyncedImmediately(): void

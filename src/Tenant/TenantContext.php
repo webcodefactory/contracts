@@ -21,8 +21,17 @@ final class TenantContext
     public function subscribe(TenantChangeListenerInterface $listener): void
     {
         $this->listeners[] = $listener;
-        // late subscribers see the current state immediately
-        $listener->onTenantChanged($this->tenantId);
+        // A late subscriber sees a RESOLVED tenant immediately. An unresolved
+        // context has nothing to sync (the Doctrine filter without a parameter
+        // already fails closed) and must not touch listeners: the context is
+        // often constructed from inside Doctrine's own lazy initialisation
+        // (EntityManager -> cache pool logger -> TenantProcessor -> here), and
+        // TenantFilterConfigurator calling getFilters() on that half-built
+        // EntityManager ghost is a fatal "$config must not be accessed before
+        // initialization" - it killed every prod image build.
+        if ($this->tenantId !== null) {
+            $listener->onTenantChanged($this->tenantId);
+        }
     }
 
     public function set(TenantId $tenantId): void
