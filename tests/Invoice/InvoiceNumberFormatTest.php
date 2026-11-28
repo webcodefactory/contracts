@@ -81,6 +81,16 @@ final class InvoiceNumberFormatTest extends TestCase
         self::assertSame('F/{NR}', (string) InvoiceNumberFormat::fromStored('F/{NR}'));
     }
 
+    public function testCorrectionsAreASeriesWithTheirOwnDefault(): void
+    {
+        $corrections = InvoiceNumberFormat::defaultForCorrections();
+
+        self::assertSame('FK/2026/11/0001', $corrections->number(1, new \DateTimeImmutable('2026-11-28')));
+        self::assertSame(InvoiceNumberFormat::DEFAULT_CORRECTION, (string) InvoiceNumberFormat::fromStored(null, $corrections));
+        self::assertSame(InvoiceNumberFormat::DEFAULT_CORRECTION, (string) InvoiceNumberFormat::fromStored('K/{MM}', $corrections));
+        self::assertSame('K/{NR}', (string) InvoiceNumberFormat::fromStored('K/{NR}', $corrections));
+    }
+
     public function testSequenceStartsAtOne(): void
     {
         $this->expectException(\InvalidArgumentException::class);

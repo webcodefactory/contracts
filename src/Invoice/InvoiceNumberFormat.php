@@ -21,6 +21,8 @@ namespace Alumateria\Contracts\Invoice;
 final readonly class InvoiceNumberFormat implements \Stringable
 {
     public const DEFAULT = 'FV/{RRRR}/{MM}/{NR:4}';
+    /** Correcting invoices are a series of their own, with their own counter */
+    public const DEFAULT_CORRECTION = 'FK/{RRRR}/{MM}/{NR:4}';
     public const MAX_LENGTH = 40;
     public const MAX_PADDING = 10;
 
@@ -88,16 +90,24 @@ final readonly class InvoiceNumberFormat implements \Stringable
         return self::fromString(self::DEFAULT);
     }
 
-    /** The stored format of a shop; anything unusable falls back to the default */
-    public static function fromStored(mixed $pattern): self
+    public static function defaultForCorrections(): self
+    {
+        return self::fromString(self::DEFAULT_CORRECTION);
+    }
+
+    /**
+     * The stored format of a shop; anything unusable falls back to the
+     * default of the series ($fallback, the invoice default when not given).
+     */
+    public static function fromStored(mixed $pattern, ?self $fallback = null): self
     {
         if (!is_string($pattern) || trim($pattern) === '') {
-            return self::default();
+            return $fallback ?? self::default();
         }
         try {
             return self::fromString($pattern);
         } catch (InvalidInvoiceNumberFormat) {
-            return self::default();
+            return $fallback ?? self::default();
         }
     }
 
